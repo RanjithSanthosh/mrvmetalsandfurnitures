@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# MRV Group of Technologies - Product Catalog
+
+A premium, production-ready product catalog web application built with Next.js 15, TypeScript, Tailwind CSS, and MongoDB.
+
+## Features
+
+- **Public Catalog**: Browse products by Category and Type.
+- **Product Details**: Carousel images, detailed description, attributes.
+- **WhatsApp Inquiry**: Direct "Inquiry" button sending pre-formatted message to business WhatsApp.
+- **Admin Dashboard**: Secure admin panel to manage Products and Categories.
+- **Authentication**: Secure Admin login with HTTP-only cookies (JWT).
+- **Responsive Design**: Mobile-first, beautiful UI with Tailwind CSS and Shadcn UI.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS (v4), Shadcn UI, Lucid React Icons
+- **Database**: MongoDB (via Mongoose)
+- **State/Fetching**: SWR
+- **Auth**: JOSE (JWT), BcryptJS
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- MongoDB Atlas Account (or local MongoDB)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repo-url>
+   cd mrvfurnituresandsteels
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Configure Environment:
+   Copy `.env.example` to `.env.local` and fill in the values.
+   ```bash
+   cp .env.example .env.local
+   ```
+   - `MONGODB_URI`: Your MongoDB connection string.
+   - `JWT_SECRET`: A long random string for security.
+   - `NEXT_PUBLIC_WHATSAPP_NUMBER`: The business phone number (with country code, no +).
+
+### Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Open [http://localhost:3000](http://localhost:3000).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Admin Setup (First Time)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+To create the initial Admin user:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Ensure `.env.local` is configured and MongoDB is reachable.
+2. Open your browser and navigate to:
+   `http://localhost:3000/api/setup`
+3. If successful, it will return a JSON response with the default credentials (`admin` / `admin123`).
+4. **IMPORTANT**: Go to `/admin/login`, log in, and change your password immediately.
+5. (Optional) You can disable the setup route by deleting `src/app/api/setup/route.ts` after use.
 
-## Learn More
+## Deployment to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Push code to GitHub.
+2. Import project into Vercel.
+3. Add Environment Variables (`MONGODB_URI`, `JWT_SECRET`, `NEXT_PUBLIC_WHATSAPP_NUMBER`) in Vercel Project Settings.
+4. Deploy.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Folder Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `src/app`: App Router pages and API routes.
+- `src/components`: Reusable UI components.
+- `src/lib`: Utilities, DB connection.
+- `src/models`: Mongoose models.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Private / Proprietary.
