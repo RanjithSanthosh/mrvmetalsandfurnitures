@@ -2,7 +2,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: any = {
-  
+    eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -15,9 +17,7 @@ const nextConfig: any = {
       },
     ],
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+
 
 };
 
