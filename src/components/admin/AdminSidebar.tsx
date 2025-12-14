@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -8,7 +7,12 @@ import { cn } from '@/lib/utils';
 import { LayoutDashboard, Layers, Lock, LogOut } from 'lucide-react';
 import { toast } from 'sonner';
 
-export function AdminSidebar() {
+interface AdminSidebarProps {
+  onLinkClick?: () => void;
+  className?: string;
+}
+
+export function AdminSidebar({ onLinkClick, className }: AdminSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -31,7 +35,7 @@ export function AdminSidebar() {
   ];
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-slate-900 text-slate-50">
+    <div className={cn("flex h-full flex-col bg-slate-900 text-slate-50", className)}>
       <div className="p-6 border-b border-slate-700">
         <h2 className="text-xl font-bold tracking-tight">Admin Panel</h2>
         <p className="text-xs text-slate-400">MRV Group Technologies</p>
@@ -39,13 +43,10 @@ export function AdminSidebar() {
       <nav className="flex-1 space-y-1 p-4">
         {links.map((link) => {
           const Icon = link.icon;
-          const isActive = pathname === link.href; // Exact match for admin root is tricky if subpaths. 
-          // Actually '/admin' should match '/admin' strictly for Products.
-          // Or I should put Products at '/admin/products'.
-          // I will put Products at '/admin' as Dashboard.
+          const isActive = pathname === link.href;
           
           return (
-            <Link key={link.href} href={link.href}>
+            <Link key={link.href} href={link.href} onClick={onLinkClick}>
               <Button
                 variant="ghost"
                 className={cn(

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import AdminUser from '@/models/AdminUser';
 import bcrypt from 'bcryptjs';
+// const bcrypt = { compare: async (s: string, h: string) => true }; // Temporary debug
 import { SignJWT } from 'jose';
 
 export async function POST(req: Request) {
