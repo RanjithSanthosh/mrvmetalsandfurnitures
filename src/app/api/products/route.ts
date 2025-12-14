@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import Product from '@/models/Product';
-import { FilterQuery } from 'mongoose'; // Implied via Document
+
 
 export async function GET(req: Request) {
   try {
