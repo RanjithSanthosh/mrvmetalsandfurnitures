@@ -57,7 +57,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
   const removeImageField = (index: number) => {
     if (formData.images.length > 1) {
-      const newImages = formData.images.filter((_, i) => i !== index);
+      const newImages = formData.images.filter((_: string, i: number) => i !== index);
       setFormData({ ...formData, images: newImages });
     }
   };
@@ -74,7 +74,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
   };
 
   const removeAttrField = (index: number) => {
-    const newAttrs = formData.attributes.filter((_, i) => i !== index);
+    const newAttrs = formData.attributes.filter((_: any, i: number) => i !== index);
     setFormData({ ...formData, attributes: newAttrs });
   };
 
@@ -202,7 +202,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
           <div className="space-y-2">
              <Label>Images (Max 5) - Upload or Paste URL</Label>
-             {formData.images.map((img, i) => (
+             {formData.images.map((img: string, i: number) => (
                <div key={i} className="flex gap-2 items-center">
                  <div className="flex-1 space-y-2">
                     <div className="flex gap-2">
@@ -262,10 +262,10 @@ export function ProductForm({ initialData }: ProductFormProps) {
         <CardContent className="pt-6">
            <Label className="mb-4 block">Product Attributes (Optional)</Label>
            <div className="space-y-2">
-             {formData.attributes.map((attr, i) => (
+             {formData.attributes.map((attr: any, i: number) => (
                <div key={i} className="flex gap-2">
-                 <Input placeholder="Name (e.g. Material)" value={attr.key} onChange={(e) => handleAttrChange(i, 'key', e.target.value)} />
-                 <Input placeholder="Value (e.g. Steel)" value={attr.value} onChange={(e) => handleAttrChange(i, 'value', e.target.value)} />
+                 <Input placeholder="Name (e.g. Material)" value={attr.key as string} onChange={(e) => handleAttrChange(i, 'key', e.target.value)} />
+                 <Input placeholder="Value (e.g. Steel)" value={attr.value as string} onChange={(e) => handleAttrChange(i, 'value', e.target.value)} />
                  <Button type="button" variant="ghost" size="icon" onClick={() => removeAttrField(i)}>
                     <X className="h-4 w-4" />
                  </Button>
