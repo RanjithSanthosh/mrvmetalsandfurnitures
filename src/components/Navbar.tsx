@@ -49,7 +49,7 @@ export function Navbar({ categories = [] }: NavbarProps) {
             </div>
           </Link>
 
-          {/* Search Bar - Center */}
+          {/* Desktop Search Bar - Center */}
           <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-2xl relative group">
             <div className="flex w-full rounded-md overflow-hidden bg-white h-10 ring-2 ring-transparent focus-within:ring-[#FFD814]">
               {/* Category Select Mock */}
@@ -69,37 +69,32 @@ export function Navbar({ categories = [] }: NavbarProps) {
             </div>
           </form>
 
-          {/* Mobile Search Icon (visible only on small screens) */}
-          <div className="md:hidden ml-auto">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-              <Search className="h-5 w-5" />
-            </Button>
-          </div>
-
           {/* Right Actions */}
           <nav className="flex items-center gap-4 ml-auto md:ml-0 shrink-0">
-
-            {/* Admin / Login */}
-            {/* <Link href="/admin/login" className="hidden sm:flex flex-col text-xs leading-none hover:outline outline-1 outline-white p-1 rounded-sm">
-              <span className="text-gray-300">Hello, Admin</span>
-              <span className="font-bold text-sm">Account & Lists</span>
-            </Link> */}
-
-            {/* Orders / Returns (Mock) */}
-            {/* <div className="hidden sm:flex flex-col text-xs leading-none hover:outline outline-1 outline-white p-1 rounded-sm cursor-pointer">
-              <span className="text-gray-300">Returns</span>
-              <span className="font-bold text-sm">& Orders</span>
-            </div> */}
-
             {/* Cart / Contact */}
-            <Link href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}`} target="_blank" className="flex items-end gap-1 hover:outline outline-1 outline-white p-2 rounded-sm">
+            <Link href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi, I would like to inquire about MRV products.")}`} target="_blank" className="flex items-end gap-1 hover:outline outline-1 outline-white p-2 rounded-sm">
               <div className="relative">
                 <ShoppingCart className="h-6 w-6 text-white" />
-                {/* <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-[#FFD814] text-black text-[10px] font-bold flex items-center justify-center"></span> */}
               </div>
               <span className="font-bold text-sm hidden sm:inline mb-1">Inquiry</span>
             </Link>
           </nav>
+        </div>
+
+        {/* Mobile Search Bar - Visible only on mobile */}
+        <div className="md:hidden px-4 pb-3">
+          <form onSubmit={handleSearch} className="flex w-full rounded-md overflow-hidden bg-white h-10 ring-2 ring-transparent focus-within:ring-[#FFD814]">
+            <Input
+              type="text"
+              placeholder="Search MRV Products..."
+              className="flex-1 border-0 shadow-none focus-visible:ring-0 rounded-none text-black h-full px-3"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button type="submit" className="bg-[#FFD814] hover:bg-[#F7CA00] px-5 flex items-center justify-center transition-colors">
+              <Search className="h-5 w-5 text-black" />
+            </button>
+          </form>
         </div>
 
         {/* Sub-navigation (Categories Strip) */}
@@ -122,10 +117,6 @@ export function Navbar({ categories = [] }: NavbarProps) {
                 {cat.name}
               </Link>
             ))}
-
-            {/* <Link href="/?sort=new" className="hover:outline outline-1 outline-white p-1 px-2 rounded-sm cursor-pointer font-medium text-sm text-gray-200 hover:text-white ml-auto hidden md:block">
-              New Releases
-            </Link> */}
           </div>
         </div>
       </header>

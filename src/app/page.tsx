@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
 interface Props {
   searchParams: Promise<{ category?: string; type?: string; search?: string; price_min?: string; price_max?: string }>;
