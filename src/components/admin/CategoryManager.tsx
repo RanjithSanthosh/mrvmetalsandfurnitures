@@ -17,6 +17,7 @@ const fetcher = (url: string) => fetch(url).then(res => res.json());
 export function CategoryManager() {
   const { data: categories, isLoading } = useSWR('/api/admin/categories', fetcher);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryImage, setNewCategoryImage] = useState('');
 
   const [isCreating, setIsCreating] = useState(false);
   const createCategory = async () => {
@@ -26,11 +27,12 @@ export function CategoryManager() {
       const res = await fetch('/api/admin/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: newCategoryName }),
+        body: JSON.stringify({ name: newCategoryName, image: newCategoryImage }),
       });
       if (!res.ok) throw new Error('Failed to create');
       toast.success('Category created');
       setNewCategoryName('');
+      setNewCategoryImage('');
       mutate('/api/admin/categories');
     } catch {
       toast.error('Error creating category');
@@ -39,18 +41,44 @@ export function CategoryManager() {
     }
   };
 
+  const handleCreateImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const file = e.target.files?.[0];
+     if (file) {
+        if (file.size > 2 * 1024 * 1024) return toast.error("File too large (max 2MB)");
+        const reader = new FileReader();
+        reader.onloadend = () => setNewCategoryImage(reader.result as string);
+        reader.readAsDataURL(file);
+     }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex gap-4 items-end">
-        <div className="space-y-2 flex-1 max-w-sm">
-          <Label>New Category Name</Label>
-          <Input 
-            value={newCategoryName} 
-            onChange={(e) => setNewCategoryName(e.target.value)} 
-            placeholder="e.g. Metals"
-          />
+      <div className="flex flex-col gap-4 border p-4 rounded-lg bg-white shadow-sm">
+        <h3 className="font-semibold text-lg">Add New Category</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+            <Label>Name</Label>
+            <Input 
+                value={newCategoryName} 
+                onChange={(e) => setNewCategoryName(e.target.value)} 
+                placeholder="e.g. Metals"
+            />
+            </div>
+            <div className="space-y-2">
+            <Label>Logo (Optional)</Label>
+            <div className="flex gap-2">
+                <Input type="file" accept="image/*" onChange={handleCreateImageUpload} className="text-xs" />
+                {newCategoryImage && (
+                    <div className="relative h-10 w-10 border rounded overflow-hidden shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={newCategoryImage} alt="Preview" className="object-cover w-full h-full" />
+                        <X className="h-3 w-3 absolute top-0 right-0 bg-white cursor-pointer" onClick={() => setNewCategoryImage('')} />
+                    </div>
+                )}
+            </div>
+            </div>
         </div>
-        <Button onClick={createCategory} disabled={!newCategoryName || isCreating}>
+        <Button onClick={createCategory} disabled={!newCategoryName || isCreating} className="self-end">
           {isCreating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />} 
           Create Category
         </Button>
@@ -68,6 +96,7 @@ export function CategoryManager() {
 function CategoryCard({ category }: { category: any }) {
   const [name, setName] = useState(category.name);
   const [types, setTypes] = useState<string[]>(category.types || []);
+  const [image, setImage] = useState(category.image || '');
   const [newType, setNewType] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -80,7 +109,7 @@ function CategoryCard({ category }: { category: any }) {
       const res = await fetch(`/api/admin/categories/${category._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, types }),
+        body: JSON.stringify({ name, types, image }),
       });
       if (!res.ok) throw new Error('Failed to update');
       toast.success('Category updated');
@@ -117,16 +146,52 @@ function CategoryCard({ category }: { category: any }) {
     setHasChanges(true);
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+       if (file.size > 2 * 1024 * 1024) return toast.error("File too large (max 2MB)");
+       const reader = new FileReader();
+       reader.onloadend = () => {
+            setImage(reader.result as string);
+            setHasChanges(true);
+       };
+       reader.readAsDataURL(file);
+    }
+ };
+
   return (
     <Card className="relative overflow-hidden border-slate-200 shadow-sm hover:shadow-md transition-shadow rounded-xl">
       <CardHeader className="p-4 pb-2">
-        <div className="flex justify-between items-center mb-2">
-            <Input 
-               value={name} 
-               onChange={(e) => { setName(e.target.value); setHasChanges(true); }} 
-               className="font-bold h-8 w-full mr-2"
-            />
-             <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={deleteCategory}>
+        <div className="flex justify-between items-start mb-2 gap-2">
+            <div className="flex flex-col gap-2 w-full">
+                <Input 
+                   value={name} 
+                   onChange={(e) => { setName(e.target.value); setHasChanges(true); }} 
+                   className="font-bold h-8"
+                   placeholder="Category Name"
+                />
+                 {/* Image Edit */}
+                 <div className="flex items-center gap-2">
+                    {image ? (
+                        <div className="relative h-10 w-10 border rounded overflow-hidden shrink-0 group">
+                             {/* eslint-disable-next-line @next/next/no-img-element */}
+                             <img src={image} alt="Logo" className="object-cover w-full h-full" />
+                             <div className="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center cursor-pointer" onClick={() => { setImage(''); setHasChanges(true); }}>
+                                <X className="h-4 w-4 text-white" />
+                             </div>
+                        </div>
+                    ) : (
+                        <div className="h-10 w-10 border rounded flex items-center justify-center bg-slate-50 text-xs text-muted-foreground shrink-0">
+                            Logo
+                        </div>
+                    )}
+                    <div className="relative overflow-hidden">
+                        <Input type="file" accept="image/*" onChange={handleImageUpload} className="w-full text-xs opacity-0 absolute inset-0 cursor-pointer" />
+                        <Button variant="outline" size="sm" className="h-8 text-xs px-2 pointer-events-none">Change Logo</Button>
+                    </div>
+                </div>
+            </div>
+             <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50 shrink-0" onClick={deleteCategory}>
                 <Trash2 className="h-4 w-4" />
              </Button>
         </div>
