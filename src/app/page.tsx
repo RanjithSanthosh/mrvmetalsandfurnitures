@@ -3,6 +3,7 @@ import { getCategories, getProducts } from '@/lib/data';
 import { ProductCard } from '@/components/ProductCard';
 import Link from 'next/link';
 import { ArrowUp, Sparkles, SlidersHorizontal, ArrowRight, Package2 } from 'lucide-react';
+import { Footer } from '@/components/Footer';
 
 interface Props {
   searchParams: Promise<{ category?: string; type?: string; search?: string; price_min?: string; price_max?: string }>;
@@ -89,9 +90,7 @@ export default async function Home(props: Props) {
       </main>
 
       {/* FOOTER */}
-      <footer className="bg-[#0F172A] text-white pt-20">
-        {/* ... footer content ... */}
-      </footer>
+      <Footer />
     </div>
   );
 }
