@@ -324,7 +324,7 @@ export function SidebarFilter({ isOpen, onClose, categories }: SidebarFilterProp
                        { label: 'Under ₹2,000', min: 0, max: 2000 },
                       { label: 'Under ₹5,000', min: 0, max: 5000 },
                       { label: '₹5,000 — ₹15,000', min: 5000, max: 15000 },
-                      { label: 'Premium Range', min: 15000, max: 1000000 }
+                      // { label: 'Premium Range', min: 15000, max: 1000000 }
                     ].map((range) => (
                       <button
                         key={range.label}

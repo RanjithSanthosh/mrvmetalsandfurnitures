@@ -123,167 +123,228 @@ export function ProductForm({ initialData }: ProductFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl pb-32 md:pb-0">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit} className="space-y-8 max-w-5xl pb-32 md:pb-12 mx-auto">
 
-        {/* Basic Info */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Product Title</Label>
-            <Input required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Category</Label>
-              <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val, type: '' })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories?.map((c: any) => (
-                    <SelectItem key={c._id} value={c.name}>{c.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Type</Label>
-              <Select value={formData.type} onValueChange={(val) => setFormData({ ...formData, type: val })} disabled={!formData.category}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableTypes.map((t: string) => (
-                    <SelectItem key={t} value={t}>{t}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Price (₹)</Label>
-              <Input type="number" required value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label>MRP (₹)</Label>
-              <Input type="number" required value={formData.mrpPrice} onChange={e => setFormData({ ...formData, mrpPrice: e.target.value })} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>SKU (Optional)</Label>
-              <Input value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label>Stock Status</Label>
-              <Select value={formData.stockStatus} onValueChange={(val) => setFormData({ ...formData, stockStatus: val })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="In Stock">In Stock</SelectItem>
-                  <SelectItem value="Out of Stock">Out of Stock</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+      {/* Header / Actions - Desktop */}
+      <div className="hidden md:flex items-center justify-between mb-8">
+        <p className="text-slate-500">Fill in the details below to add a new product to your inventory.</p>
+        <div className="flex gap-3">
+          <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
+          <Button type="submit" disabled={loading} className="bg-slate-900 hover:bg-slate-800 text-white min-w-[140px]">
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (initialData ? 'Update Product' : 'Create Product')}
+          </Button>
         </div>
+      </div>
 
-        {/* Description & Images */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Description</Label>
-            <Textarea className="h-32" required value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          <div className="space-y-2">
-            <Label>Images (Max 5) - Upload or Paste URL</Label>
-            {formData.images.map((img: string, i: number) => (
-              <div key={i} className="flex gap-2 items-center">
-                <div className="flex-1 space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          if (file.size > 5 * 1024 * 1024) {
-                            toast.error("File too large (max 5MB)");
-                            return;
-                          }
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            handleImageChange(i, reader.result as string);
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
-                    />
-                    <span className="text-xs text-muted-foreground self-center">OR</span>
-                    <Input
-                      placeholder="https://..."
-                      value={img.startsWith('data:') ? '(Image Uploaded)' : img}
-                      onChange={(e) => handleImageChange(i, e.target.value)}
-                      disabled={img.startsWith('data:')}
-                    />
+        {/* LEFT COLUMN - MAIN INFO */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-slate-50 px-6 py-4 border-b border-slate-100">
+              <h3 className="font-bold text-slate-800">Basic Information</h3>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <Label className="text-slate-700 font-semibold">Product Title</Label>
+                <Input
+                  required
+                  value={formData.title}
+                  onChange={e => setFormData({ ...formData, title: e.target.value })}
+                  className="h-11 text-lg border-slate-300 focus:border-amber-400"
+                  placeholder="e.g. Industrial Heavy Duty Steel Rack"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label className="text-slate-700 font-semibold">Category</Label>
+                  <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val, type: '' })}>
+                    <SelectTrigger className="h-11 border-slate-300">
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((c: any) => (
+                        <SelectItem key={c._id} value={c.name}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-3">
+                  <Label className="text-slate-700 font-semibold">Type / Sub-Category</Label>
+                  <Select value={formData.type} onValueChange={(val) => setFormData({ ...formData, type: val })} disabled={!formData.category}>
+                    <SelectTrigger className="h-11 border-slate-300">
+                      <SelectValue placeholder="Select Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableTypes.map((t: string) => (
+                        <SelectItem key={t} value={t}>{t}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-slate-700 font-semibold">Description</Label>
+                <Textarea
+                  className="min-h-[150px] border-slate-300 focus:border-amber-400 resize-y"
+                  required
+                  value={formData.description}
+                  onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Detailed description of the product..."
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-slate-50 px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+              <h3 className="font-bold text-slate-800">Product Images</h3>
+              <span className="text-xs text-slate-500 font-medium bg-white px-2 py-1 rounded border">Max 5 Images</span>
+            </div>
+            <CardContent className="p-6 space-y-4">
+              {formData.images.map((img: string, i: number) => (
+                <div key={i} className="flex gap-4 items-start bg-slate-50 p-3 rounded-lg border border-slate-100">
+                  <div className="flex-1 space-y-3">
+                    <Label className="text-xs uppercase font-bold text-slate-400">Image {i + 1} Source</Label>
+                    <div className="flex gap-3">
+                      <div className="relative flex-1">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              if (file.size > 5 * 1024 * 1024) {
+                                toast.error("File too large (max 5MB)");
+                                return;
+                              }
+                              const reader = new FileReader();
+                              reader.onloadend = () => handleImageChange(i, reader.result as string);
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                        <div className="h-10 w-full border border-dashed border-slate-300 rounded-md bg-white flex items-center px-3 text-sm text-slate-500 hover:bg-slate-50 transition-colors">
+                          Click to Upload File
+                        </div>
+                      </div>
+                      <span className="self-center font-bold text-xs text-slate-400">OR</span>
+                      <Input
+                        placeholder="Paste Image URL"
+                        value={img.startsWith('data:') ? '(Uploaded File)' : img}
+                        onChange={(e) => handleImageChange(i, e.target.value)}
+                        disabled={img.startsWith('data:')}
+                        className="flex-1 bg-white"
+                      />
+                    </div>
                   </div>
+
                   {img && (
-                    <div className="relative h-20 w-20 border rounded overflow-hidden">
+                    <div className="relative h-20 w-20 bg-white border rounded-lg overflow-hidden shrink-0 shadow-sm">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={img} alt="Preview" className="object-cover w-full h-full" />
                     </div>
                   )}
+
+                  {formData.images.length > 1 && (
+                    <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(i)} className="text-slate-400 hover:text-red-500">
+                      <X className="h-5 w-5" />
+                    </Button>
+                  )}
                 </div>
+              ))}
 
+              {formData.images.length < 5 && (
+                <Button type="button" variant="outline" onClick={addImageField} className="w-full border-dashed border-2 py-6 text-slate-500 hover:text-amber-600 hover:border-amber-400 hover:bg-amber-50">
+                  <Plus className="h-5 w-5 mr-2" /> Add Another Image
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-                {formData.images.length > 1 && (
-                  <Button type="button" variant="ghost" size="icon" onClick={() => removeImageField(i)}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+        {/* RIGHT COLUMN - SIDEBAR */}
+        <div className="space-y-6">
+          <Card className="border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-slate-50 px-6 py-4 border-b border-slate-100">
+              <h3 className="font-bold text-slate-800">Pricing & Inventory</h3>
+            </div>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <Label className="text-slate-700 font-semibold">Selling Price (₹)</Label>
+                <Input
+                  type="number"
+                  required
+                  value={formData.price}
+                  onChange={e => setFormData({ ...formData, price: e.target.value })}
+                  className="border-transparent h-11 border-slate-300 font-mono text-lg font-bold text-slate-900"
+                />
               </div>
-            ))}
-            {formData.images.length < 5 && (
-              <Button type="button" variant="outline" size="sm" onClick={addImageField} className="mt-2">
-                <Plus className="h-4 w-4 mr-2" /> Add Image
+              <div className="space-y-3">
+                <Label className="text-slate-700 font-semibold">MRP (₹)</Label>
+                <Input
+                  type="number"
+                  required
+                  value={formData.mrpPrice}
+                  onChange={e => setFormData({ ...formData, mrpPrice: e.target.value })}
+                  className="border-transparent h-11 border-slate-300 font-mono text-lg font-bold text-slate-900"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-slate-100 space-y-4">
+                <div className="space-y-3">
+                  <Label className="text-slate-700 font-semibold">Stock Status</Label>
+                  <Select value={formData.stockStatus} onValueChange={(val) => setFormData({ ...formData, stockStatus: val })}>
+                    <SelectTrigger className={`h-11 font-medium ${formData.stockStatus === 'In Stock' ? 'text-green-600 border-green-200 bg-green-50' : 'text-red-600 border-red-200 bg-red-50'}`}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="In Stock" className="text-green-600 font-bold">In Stock</SelectItem>
+                      <SelectItem value="Out of Stock" className="text-red-600 font-bold">Out of Stock</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-3 ">
+                  <Label className="text-slate-700 font-semibold ">SKU (Optional)</Label>
+                  <Input value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} className="h-11 uppercase border-slate-300" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-slate-50 px-6 py-4 border-b border-slate-100">
+              <h3 className="font-bold text-slate-800">Attributes</h3>
+            </div>
+            <CardContent className="p-6 space-y-4">
+              {formData.attributes.map((attr: any, i: number) => (
+                <div key={i} className="flex gap-2 items-center bg-slate-50 p-2 rounded border border-slate-100">
+                  <Input placeholder="Key" value={attr.key} onChange={(e) => handleAttrChange(i, 'key', e.target.value)} className="h-8 text-xs bg-white" />
+                  <Input placeholder="Value" value={attr.value} onChange={(e) => handleAttrChange(i, 'value', e.target.value)} className="h-8 text-xs bg-white" />
+                  <Button type="button" variant="ghost" size="icon" onClick={() => removeAttrField(i)} className="h-8 w-8 hover:bg-white text-slate-400 hover:text-red-500">
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" variant="outline" size="sm" onClick={addAttrField} className="w-full text-xs">
+                <Plus className="h-3 w-3 mr-2" /> Add New Attribute
               </Button>
-            )}
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Attributes */}
-      <Card>
-        <CardContent className="pt-6">
-          <Label className="mb-4 block">Product Attributes (Optional)</Label>
-          <div className="space-y-2">
-            {formData.attributes.map((attr: any, i: number) => (
-              <div key={i} className="flex gap-2">
-                <Input placeholder="Name (e.g. Material)" value={attr.key as string} onChange={(e) => handleAttrChange(i, 'key', e.target.value)} />
-                <Input placeholder="Value (e.g. Steel)" value={attr.value as string} onChange={(e) => handleAttrChange(i, 'value', e.target.value)} />
-                <Button type="button" variant="ghost" size="icon" onClick={() => removeAttrField(i)}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-            <Button type="button" variant="outline" size="sm" onClick={addAttrField}>
-              <Plus className="h-4 w-4 mr-2" /> Add Attribute
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 z-50 flex justify-end gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:relative md:bg-transparent md:border-none md:shadow-none md:p-0">
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 z-50 flex justify-end gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:hidden">
         <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-        <Button type="submit" disabled={loading} className="bg-[#FFD814] hover:bg-[#F7CA00] text-black">
-          {loading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : (initialData ? 'Update Product' : 'Create Product')}
+        <Button type="submit" disabled={loading} className="bg-slate-900 text-white">
+          {loading ? 'Saving...' : (initialData ? 'Update' : 'Create')}
         </Button>
       </div>
     </form>
   );
 }
+
+

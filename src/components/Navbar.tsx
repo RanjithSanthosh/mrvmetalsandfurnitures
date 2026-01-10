@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Package2, Search, ShoppingCart,PhoneCall , Menu, X, ChevronRight } from 'lucide-react';
+import { Package2, Search, ShoppingCart, PhoneCall, Menu, X, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { SidebarFilter } from './SidebarFilter';
@@ -56,7 +56,7 @@ export function Navbar({ categories = [] }: NavbarProps) {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-500/20">
               <Package2 className="h-6 w-6 text-[#131921]" />
             </div>
-            <div className="hidden lg:flex flex-col">
+            <div className="flex flex-col">
               <span className="text-lg font-bold tracking-tight text-white leading-tight">
                 MRV <span className="text-amber-400">GROUP</span>
               </span>
@@ -69,7 +69,7 @@ export function Navbar({ categories = [] }: NavbarProps) {
           {/* Centered Search Bar */}
           <form
             onSubmit={handleSearch}
-            className="flex-1 max-w-2xl group relative"
+            className="flex-1 max-w-2xl group relative hidden md:flex"
           >
             <div className="relative flex items-center w-full bg-white rounded-lg overflow-hidden transition-all duration-200 focus-within:ring-2 focus-within:ring-amber-400 focus-within:shadow-[0_0_20px_rgba(251,191,36,0.2)]">
               <div className="hidden sm:flex items-center px-4 bg-gray-50 border-r border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
@@ -101,9 +101,7 @@ export function Navbar({ categories = [] }: NavbarProps) {
             >
               <div className="relative">
                 <PhoneCall className="h-6 w-6 text-white group-hover:text-amber-400 transition-colors" />
-                {/* <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-[#131921]">
-                  
-                </span> */}
+
               </div>
               <div className="hidden xl:flex flex-col items-start leading-none">
                 <span className="text-[11px] text-gray-400">Quick</span>
@@ -140,19 +138,9 @@ export function Navbar({ categories = [] }: NavbarProps) {
               All Categories
             </button>
 
-            {/* <nav className="flex items-center gap-1 overflow-x-auto scrollbar-hide no-scrollbar">
-              {categories.slice(0, 8).map((cat) => (
-                <Link
-                  key={cat._id}
-                  href={`/?category=${encodeURIComponent(cat.name)}`}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 rounded-md transition-all whitespace-nowrap"
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </nav> */}
+
             <div>
-              <h2 className='text-sm font-semibold text-white tracking-widest mx-105'> Welcome to MRV Groups</h2>
+
             </div>
             <div className="ml-auto hidden md:block">
               <p className="text-xs font-bold text-amber-400 uppercase tracking-widest">Limited Offers Available</p>
