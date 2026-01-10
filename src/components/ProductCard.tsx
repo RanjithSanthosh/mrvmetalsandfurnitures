@@ -52,24 +52,24 @@ export function ProductCard({ product }: { product: any }) {
           {product.title}
         </h3>
 
-        <div className="mt-auto pt-3 border-t border-slate-100 flex items-end justify-between">
-          <div className="space-y-0.5">
+        <div className="mt-auto pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-2">
+          <div className="flex flex-col">
             {product.mrpPrice > product.price && (
-              <span className="text-xs text-slate-400 line-through">
+              <span className="text-[10px] text-slate-400 line-through">
                 ₹{product.mrpPrice.toLocaleString('en-IN')}
               </span>
             )}
-            <div className="text-lg font-black text-slate-900 leading-none">
+            <div className="text-sm sm:text-lg font-black text-slate-900 leading-none">
               ₹{product.price.toLocaleString('en-IN')}
             </div>
           </div>
 
           {isOutOfStock ? (
-            <button disabled className="text-[10px] font-bold text-slate-400 uppercase">Unavailable</button>
+            <button disabled className="text-[10px] font-bold text-slate-400 uppercase w-full sm:w-auto text-center">Unavailable</button>
           ) : (
             <Link
               href={`/product/${product._id}`}
-              className="relative z-20 flex items-center gap-1 bg-slate-900 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-amber-500 hover:text-black transition-colors"
+              className="relative z-20 flex w-full sm:w-auto justify-center items-center gap-1.5 bg-slate-900 text-white px-3 py-2 rounded-lg text-xs font-bold hover:bg-amber-500 hover:text-black transition-colors whitespace-nowrap"
             >
               Buy Now <ShoppingCart className="h-3 w-3" />
             </Link>
