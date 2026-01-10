@@ -44,7 +44,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center  p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       {/* Abstract Background Shapes */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/10 rounded-full blur-[100px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[100px]" />
