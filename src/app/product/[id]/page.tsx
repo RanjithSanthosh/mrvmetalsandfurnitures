@@ -159,7 +159,7 @@ interface Props {
 export default async function ProductPage(props: Props) {
    const params = await props.params;
    const product = await getProductById(params.id);
-   const categories = await getCategories();
+   const categoriesPromise = getCategories();
 
    if (!product) {
       notFound();
@@ -187,7 +187,7 @@ Please provide more information regarding availability and delivery.`;
 
    return (
       <div className="min-h-screen bg-white font-sans flex flex-col">
-         <Navbar categories={categories} />
+         <Navbar categoriesPromise={categoriesPromise} />
 
          {/* Breadcrumb */}
          <div className="bg-[#f0f2f5] py-2 px-4 text-xs text-[#565959]">
