@@ -10,10 +10,10 @@ import { SidebarFilter } from './SidebarFilter';
 import { cn } from '@/lib/utils'; // Ensure you have this utility for Tailwind classes
 
 interface NavbarProps {
-  categories?: { _id: string; name: string }[];
+  categoriesPromise?: Promise<any[]>;
 }
 
-export function Navbar({ categories = [] }: NavbarProps) {
+export function Navbar({ categoriesPromise = Promise.resolve([]) }: NavbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState('');
@@ -153,7 +153,7 @@ export function Navbar({ categories = [] }: NavbarProps) {
       <SidebarFilter
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
-        categories={categories}
+        categoriesPromise={categoriesPromise}
       />
     </>
   );

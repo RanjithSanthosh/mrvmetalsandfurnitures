@@ -190,30 +190,71 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, use, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, ChevronLeft, User, RotateCcw, ArrowRight } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface SidebarFilterProps {
   isOpen: boolean;
   onClose: () => void;
-  categories: any[];
+  categoriesPromise: Promise<any[]>;
 }
 
-export function SidebarFilter({ isOpen, onClose, categories }: SidebarFilterProps) {
+function SidebarCategoryList({
+  promise,
+  onCategoryClick,
+  currentCategoryName
+}: {
+  promise: Promise<any[]>,
+  onCategoryClick: (cat: any) => void,
+  currentCategoryName: string | null
+}) {
+  const categories = use(promise);
+
+  return (
+    <ul className="space-y-1">
+      {categories.map((cat) => (
+        <li
+          key={cat._id}
+          onClick={() => onCategoryClick(cat)}
+          className={cn(
+            "group flex items-center justify-between py-3.5 px-4 rounded-xl cursor-pointer transition-all",
+            currentCategoryName === cat.name ? "bg-slate-900 text-white" : "hover:bg-slate-50 text-slate-700"
+          )}
+        >
+          <span className="text-sm font-medium">{cat.name}</span>
+          <ChevronRight className={cn("h-4 w-4", currentCategoryName === cat.name ? "text-amber-400" : "text-slate-300")} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function SidebarCategorySkeleton() {
+  return (
+    <div className="space-y-2 px-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Skeleton key={i} className="h-12 w-full rounded-xl" />
+      ))}
+    </div>
+  );
+}
+
+export function SidebarFilter({ isOpen, onClose, categoriesPromise }: SidebarFilterProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeMenu, setActiveMenu] = useState<'main' | 'category'>('main');
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
 
   // Determine if any filters are active
-  const hasActiveFilters = searchParams.has('category') || 
-                           searchParams.has('type') || 
-                           searchParams.has('price_min') || 
-                           searchParams.has('price_max') ||
-                           searchParams.has('search');
+  const hasActiveFilters = searchParams.has('category') ||
+    searchParams.has('type') ||
+    searchParams.has('price_min') ||
+    searchParams.has('price_max') ||
+    searchParams.has('search');
 
   const handleReset = () => {
     router.push('/'); // Navigates to base URL, clearing all params
@@ -276,7 +317,7 @@ export function SidebarFilter({ isOpen, onClose, categories }: SidebarFilterProp
                 {/* --- RESET SECTION --- */}
                 <AnimatePresence>
                   {hasActiveFilters && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
@@ -299,29 +340,21 @@ export function SidebarFilter({ isOpen, onClose, categories }: SidebarFilterProp
                 {/* Categories */}
                 <section className="mb-10">
                   <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 px-2">Collections</h3>
-                  <ul className="space-y-1">
-                    {categories.map((cat) => (
-                      <li 
-                        key={cat._id}
-                        onClick={() => handleCategoryClick(cat)}
-                        className={cn(
-                          "group flex items-center justify-between py-3.5 px-4 rounded-xl cursor-pointer transition-all",
-                          searchParams.get('category') === cat.name ? "bg-slate-900 text-white" : "hover:bg-slate-50 text-slate-700"
-                        )}
-                      >
-                        <span className="text-sm font-medium">{cat.name}</span>
-                        <ChevronRight className={cn("h-4 w-4", searchParams.get('category') === cat.name ? "text-amber-400" : "text-slate-300")} />
-                      </li>
-                    ))}
-                  </ul>
+                  <Suspense fallback={<SidebarCategorySkeleton />}>
+                    <SidebarCategoryList
+                      promise={categoriesPromise}
+                      onCategoryClick={handleCategoryClick}
+                      currentCategoryName={searchParams.get('category')}
+                    />
+                  </Suspense>
                 </section>
-                
+
                 {/* Price Section */}
                 <section>
                   <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 px-2">Price</h3>
                   <div className="space-y-1">
                     {[
-                       { label: 'Under ₹2,000', min: 0, max: 2000 },
+                      { label: 'Under ₹2,000', min: 0, max: 2000 },
                       { label: 'Under ₹5,000', min: 0, max: 5000 },
                       { label: '₹5,000 — ₹15,000', min: 5000, max: 15000 },
                       // { label: 'Premium Range', min: 15000, max: 1000000 }
@@ -352,19 +385,19 @@ export function SidebarFilter({ isOpen, onClose, categories }: SidebarFilterProp
                 className="absolute inset-0 bg-white flex flex-col"
               >
                 <div className="p-4 border-b">
-                  <button 
+                  <button
                     onClick={() => setActiveMenu('main')}
                     className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-950 py-2 px-2 transition-colors"
                   >
                     <ChevronLeft className="h-4 w-4" /> Back to collections
                   </button>
                 </div>
-                
+
                 <div className="flex-1 overflow-y-auto px-6 py-8">
                   <h2 className="text-2xl font-bold text-slate-900 mb-8 px-2">{selectedCategory?.name}</h2>
                   <ul className="space-y-1">
                     {selectedCategory?.types?.map((type: string) => (
-                      <li 
+                      <li
                         key={type}
                         onClick={() => {
                           router.push(`/?category=${encodeURIComponent(selectedCategory.name)}&type=${encodeURIComponent(type)}`);

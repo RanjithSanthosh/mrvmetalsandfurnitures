@@ -1,23 +1,24 @@
+import { cache } from "react";
 import connectToDatabase from "@/lib/mongodb";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
 
-export async function getCategories() {
+export const getCategories = cache(async function () {
   await connectToDatabase();
   // Return plain objects to avoid serialization issues in Next.js
   const categories = await Category.find({ isActive: true })
     .sort("name")
     .lean();
   return JSON.parse(JSON.stringify(categories));
-}
+});
 
-export async function getAllCategoriesAdmin() {
+export const getAllCategoriesAdmin = cache(async function () {
   await connectToDatabase();
   const categories = await Category.find({}).sort("name").lean();
   return JSON.parse(JSON.stringify(categories));
-}
+});
 
-export async function getProducts(filters: {
+export const getProducts = cache(async function (filters: {
   category?: string;
   type?: string;
   search?: string;
@@ -54,11 +55,11 @@ export async function getProducts(filters: {
 
   const products = await Product.find(query).sort({ createdAt: -1 }).lean();
   return JSON.parse(JSON.stringify(products));
-}
+});
 
-export async function getProductById(id: string) {
+export const getProductById = cache(async function (id: string) {
   await connectToDatabase();
   const product = await Product.findById(id).lean();
   if (!product) return null;
   return JSON.parse(JSON.stringify(product));
-}
+});
